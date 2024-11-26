@@ -1,11 +1,23 @@
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hello!!!!, {name}!!!')  # Press Ctrl+F8 to toggle the breakpoint.
-    print("Hello, World!")
+from selene import browser, be, have
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+def test_search_valid_query(browser_with_custom_size):
+    """Тест успешного поиска с валидным запросом."""
+    search_input = browser.element('[name="q"]')
+    search_input.should(be.blank).type('yashaka/selene').press_enter()
+    browser.element('[id="search"]').should(
+        have.text('Tests with Selene can be built either in a simple straightforward "selenide" style')
+    )
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+def test_search_no_results(browser_with_custom_size):
+    """Тест поиска с запросом, который не должен давать результатов."""
+    search_input = browser.element('[name="q"]')
+
+    # Ввод случайного набора символов
+    search_input.should(be.present).clear().type('ssssssssssssssllllllllllllllrrrrrrrsdferwfhfgdhgrrr').press_enter()
+
+    # Проверка на отсутствие результатов
+    browser.element('[id="botstuff"]').should(
+        have.text('did not match any documents')
+    )
